@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react'
+import SearchFilter from './SearchFilter';
+import { Form } from './Form';
+import { Phonebook } from './Phonebook';
 
-function App() {
+import axios from 'axios';
+
+const App = () => {
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const promise = axios.get('http://localhost:3000/persons')
+  
+  useEffect(() => {
+    if (!persons.length) {
+      promise.then(resp => {
+        setPersons(resp.data)
+      })
+    }
+  }, [persons, promise])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>Phonebook</h2>
+      <SearchFilter setSearchTerm={setSearchTerm} />
+      <Form persons={persons} setPersons={setPersons} newName={newName} setNewName={setNewName} setPhoneNumber={setPhoneNumber} phoneNumber={phoneNumber} />
+      <h2>Numbers</h2>
+      {persons.length && <Phonebook persons={persons} searchTerm={searchTerm} />}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
